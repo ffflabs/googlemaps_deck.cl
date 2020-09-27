@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
-      "types": ["googlemaps"],
+      "moduleResolution": "classic",
+      "module": "ES6",
+      
+      "types": ["googlemaps","deck.gl","d3"],
       "checkJs": true,
       "allowJs": true
 

@@ -71,7 +71,7 @@ class App {
 
   changeExample(example) {
     window.example=example;
-    const layers = example.getLayers(this.GoogleMapWithDeckGL);    
+      const layers = example.getLayers(this.GoogleMapWithDeckGL);    
     const map_options = example.getMapOptions();    
     // short timeout so map load doesn't jank menu css transitions
     setTimeout(()=>{

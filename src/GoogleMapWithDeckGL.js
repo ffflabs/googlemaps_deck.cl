@@ -46,7 +46,8 @@ export class GoogleMapWithDeckGL {
     // Init the Google Maps JS API and base map
     await this.loadScript();
     this.api = google.maps;
-    this.overlay = new GoogleMapsOverlay();    
+    this.overlay = new GoogleMapsOverlay();  
+    window.overlay=this.overlay;  
     this.map = new this.api.Map(document.getElementById('map'), {
       center: options.center,
       zoom: options.zoom,

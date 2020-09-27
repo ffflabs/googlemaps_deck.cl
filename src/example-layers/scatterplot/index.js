@@ -15,7 +15,7 @@
  */
  
 import {ScatterplotLayer} from '@deck.gl/layers';
-
+import {json} from 'd3-fetch';
 /*
  * Demo of ScatterplotLayer that renders composite 
  * layers of Manhattan street tree and parking meter geocodes
@@ -24,32 +24,44 @@ import {ScatterplotLayer} from '@deck.gl/layers';
  * https://data.cityofnewyork.us/Environment/2015-Street-Tree-Census-Tree-Data/pi5s-9p35
  * https://data.cityofnewyork.us/Transportation/Parking-Meters-GPS-Coordinates-and-Status/5jsj-cq4s
  */
+let radiusScale=6;
 export class ScatterplotLayerExample {
   constructor() {}
-  static async *getLayers() {    
+  static setRadiusScale(scale) {
+    radiusScale=scale;
+  }
+  static async *getLayers({overlay:{props}={}}={}) {   
+    console.log(props) ;
     const data_uri = {
       trees: 'https://data.cityofnewyork.us/resource/5rq2-4hqu.json',
-      parking_meters: 'https://data.cityofnewyork.us/resource/xx9u-e8wf.json'
+      //parking_meters: 'https://data.cityofnewyork.us/resource/xx9u-e8wf.json'
     };
     const qs = {
       trees: '?$limit=65000&&boroname=Manhattan',
       parking_meters: '?$limit=15000'
     };
+    const data=await json("/geojson/dataset_colegios.json");
+     window.scatter=new ScatterplotLayer({
+      id: 'scatterplot-tree-layer',
+      data: data.features,
+      getPosition: d => d.geometry.coordinates,
+      getFillColor: d => [51, 255, 60],
+      getLineColor: d => [0, 0, 0],
+      opacity: 0.8,
+      stroked: true,
+      filled: true,
+      radiusScale:props.radiusScale||6,
+      radiusMinPixels: 1,
+      radiusMaxPixels: 100,
+      lineWidthMinPixels: 1      ,
+      getRadius:props.radiusScale||6,
+      updateTriggers:{
+        radiusScale:props.radiusScale,
+        getRadius:props.radiusScale,
+      }
+    });
     const layers = [
-      new ScatterplotLayer({
-        id: 'scatterplot-tree-layer',
-        data: data_uri.trees + qs.trees,
-        getPosition: d => d.the_geom.coordinates,
-        getFillColor: d => [51, 255, 60],
-        getLineColor: d => [0, 0, 0],
-        opacity: 0.8,
-        stroked: true,
-        filled: true,
-        radiusScale: 6,
-        radiusMinPixels: 1,
-        radiusMaxPixels: 100,
-        lineWidthMinPixels: 1      
-      }),
+    window.scatter/*,
       new ScatterplotLayer({
         id: 'scatterplot-meter-layer',
         data: data_uri.parking_meters + qs.parking_meters,
@@ -63,19 +75,20 @@ export class ScatterplotLayerExample {
         radiusMinPixels: 1,
         radiusMaxPixels: 100,
         lineWidthMinPixels: 1,        
-      })
+      })*/
     ];
 
     return layers;
   }
   static getMapOptions() {
     return {
-      center: {lat: 40.760306, lng: -73.982302},
-      zoom: 15
-    }
+      center: { lat: -33.5, lng: -70.8 },
+      zoom: 11,
+    };
   }
   static getMetadata() {
     return {
+      data_uri:"/geojson/dataset_colegios.json",
       name: 'scatterplot',
       thumbnail: 'scatterplot.png'
     }
